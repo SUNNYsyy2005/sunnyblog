@@ -1,0 +1,37 @@
+name: Deploy Static WordPress Site to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main # 当有新的提交推送到 main 分支时触发此工作流
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest # 在最新的Ubuntu Runner上运行
+
+    steps:
+      - name: Checkout code # 步骤1: 检出代码
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # 获取所有历史，这对于某些部署工具可能需要
+
+      - name: Setup Node.js # 步骤2: 设置Node.js环境 (可选，如果您的静态文件需要Node.js处理)
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20' # 或者其他您需要的Node.js版本
+
+      - name: Install dependencies # 步骤3: 安装依赖 (如果您的静态网站有构建步骤，例如npm install)
+        run: |
+          # npm install
+          # yarn install
+          echo "No specific build dependencies for pre-generated static files."
+
+      - name: Deploy to GitHub Pages # 步骤4: 部署到GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # 使用一个流行的GitHub Pages部署Action
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }} # GitHub提供的默认Token
+          publish_dir: ./ # 指定要部署的目录，这里是仓库的根目录，因为您的静态文件会直接放在这里
+          # 如果您的静态文件在仓库的子目录中，例如 'dist'，则改为 publish_dir: ./dist
+          # cname: your_custom_domain.com # 如果您有自定义域名，取消注释并替换
+          # user_name: 'github-actions[bot]' # 可选：设置提交者名称
+          # user_email: 'github-actions[bot]@users.noreply.github.com' # 可选：设置提交者邮箱
